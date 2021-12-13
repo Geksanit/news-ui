@@ -1,0 +1,11 @@
+.profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.label {
+  width: 120px;
+  flex: 0 0 auto !important;
+}

@@ -1,0 +1,21 @@
+.login {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 420px;
+  width: 100%;
+
+  padding: 25px;
+}
+
+.form {
+  display: grid;
+  gap: 25px 0;
+
+  width: 100%;
+}
+
+.passwordRecovery,
+.register {
+  justify-self: end;
+}

@@ -1,0 +1,148 @@
+openapi: 3.0.1
+info:
+  title: Rest API Docs
+  description: Users
+  version: 1.0.0
+paths:
+  /users/:
+    get:
+      tags:
+        - Users
+      summary: List all users (available only for admins)
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+            example: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+            example: 5
+          description: The numbers of items to return
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: A list of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "difinitions.yaml#/components/schemas/UserView"
+        401:
+          description: Not authorized
+        500:
+          description: Unexpected Error
+    post:
+      tags:
+        - Users
+      summary: Add a new user
+      requestBody:
+        description: User create request
+        content:
+          application/json:
+            schema:
+              $ref: "difinitions.yaml#/components/schemas/CreateUser"
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "difinitions.yaml#/components/schemas/UserView"
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
+    patch:
+      tags:
+        - Users
+      summary: Update user (available only for admins)
+      security:
+        - cookieAuth: []
+      requestBody:
+        description: User update request
+        content:
+          application/json:
+            schema:
+              $ref: "difinitions.yaml#/components/schemas/UserView"
+        required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
+
+  /users/{id}:
+    delete:
+      tags:
+        - Users
+      summary: Delete user (available only for admins)
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          description: User delete request
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get my user
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: get user
+          content:
+            application/json:
+              schema:
+                $ref: "difinitions.yaml#/components/schemas/UserView"
+        500:
+          description: Unexpected Error
+  /users/login/:
+    post:
+      tags:
+        - Users
+      summary: authoriztion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "difinitions.yaml#/components/schemas/Login"
+        required: true
+      responses:
+        200:
+          description: Authorized
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: JWT=abcde12345; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: "difinitions.yaml#/components/schemas/UserView"
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error

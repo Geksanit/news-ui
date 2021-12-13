@@ -1,0 +1,12 @@
+.file {
+  display: flex;
+  flex-flow: column nowrap;
+
+  &Input {
+    display: none;
+  }
+}
+
+.button {
+  text-align: center;
+}

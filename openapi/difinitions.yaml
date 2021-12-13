@@ -1,0 +1,319 @@
+openapi: 3.0.0
+info:
+  title: Definitions
+  version: 1.0.0
+paths: {}
+
+components:
+  parameters:
+    # Paging offset
+    OffsetParam:
+      name: offset
+      required: false
+      in: query
+      description: Paging offset
+      schema:
+        type: integer
+        minimum: 0
+        multipleOf: 10
+        default: 0
+    # Page size
+    LimitParam:
+      name: limit
+      required: false
+      in: query
+      description: Paging limit
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 1000
+        multipleOf: 10
+        default: 20
+  schemas:
+    Category:
+      allOf:
+        - $ref: '#/components/schemas/CreateCategory'
+        - type: object
+          properties:
+            id: 
+              type: integer
+          required:
+            - id
+    CreateCategory:
+      type: object
+      properties:
+        parentCategoryId:
+          nullable: true
+          type: integer
+        label: 
+          type: string
+      required:
+        - label
+        - parentCategoryId
+
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+          example: userLogin    
+        password:
+          type: string
+          example: 123    
+      required:
+        - username
+        - password
+        
+    UserModel:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            passwordHash: 
+              type: string
+            id:
+              type: integer
+            tokenCounter:
+              type: integer
+            isAdmin:
+              type: boolean
+          required:
+            - passwordHash
+            - id
+            - tokenCounter
+            - isAdmin
+    UserView:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            id:
+              type: integer
+            isAdmin:
+              type: boolean
+          required:
+            - id
+            - isAdmin
+    CreateUser:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            password: 
+              type: string
+          required:
+            - password
+    BaseUser:
+      type: object
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatarUrl:
+          type: string
+      required:
+        - username
+        - firstName
+        - lastName
+        - avatarUrl
+
+    Author:
+      allOf:
+        - $ref: '#/components/schemas/CreateAuthor'
+        - type: object
+          properties:
+            id: 
+              type: integer
+          required:
+            - id
+    FullAuthor:
+      allOf:
+        - $ref: '#/components/schemas/UserView'
+        - type: object
+          properties:
+            description: 
+              type: string
+          required:
+            - description
+
+    CreateAuthor:
+      type: object
+      properties:
+        userId:
+          type: integer
+        description:
+          type: string
+      required:
+        - userId
+        - description
+
+    Tag:
+      allOf:
+        - $ref: '#/components/schemas/CreateTag'
+        - type: object
+          properties:
+            id: 
+              type: integer
+          required:
+            - id
+    CreateTag:
+      type: object
+      properties:
+        label: 
+          type: string
+      required:
+        - label
+
+    News:
+      allOf:
+        - $ref: '#/components/schemas/CreateNews'
+        - type: object
+          properties:
+            id: 
+              type: integer
+            createdAt:
+              type: string
+              format: date
+              description: Creation date
+              example: "2021-01-30"
+            authorId:
+              type: number
+          required:
+            - id
+            - createdAt
+            - authorId
+    CreateNews:
+      type: object
+      properties:
+        title:
+          type: string
+        categoryId:
+          type: number
+        content:
+          type: string
+        topPhotoLink:
+          type: string
+        photoLinks:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          maxItems: 10
+          items: 
+            type: string
+        tagIds:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          maxItems: 10
+          items:
+            type: number
+      required:
+        - title
+        - categoryId
+        - tagsIds
+        - content
+        - topPhotoLink
+        - photoLinks
+    FullNews:
+      type: object
+      properties:
+        id: 
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date
+          description: Creation date
+          example: "2021-01-30"
+        author:
+          $ref: "#/components/schemas/FullAuthor"
+        category:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/Category"
+        tags:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/Tag"
+        content:
+          type: string
+        topPhotoLink:
+          type: string
+        photoLinks:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          maxItems: 10
+          items: 
+            type: string
+      required:
+        - id
+        - title
+        - createdAt
+        - author
+        - category
+        - tags
+        - content
+        - topPhotoLink
+        - photoLinks
+
+    Comment:
+      allOf:
+        - $ref: '#/components/schemas/CreateComment'
+        - type: object
+          properties:
+            id: 
+              type: integer
+            userId:
+              type: number
+            createdAt:
+              type: string
+              format: date
+              description: Creation date
+              example: "2021-01-30"
+          required:
+            - id
+            - userId
+            - createdAt
+    CreateComment:
+      type: object
+      properties:
+        newsId:
+          type: number
+        content: 
+          type: string
+      required:
+        - newsId
+        - content
+
+    Pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset: 
+          type: integer
+      required:
+        - limit
+        - offset
+
+    NewsOrder:
+      type: object
+      properties:
+        by:
+          type: string
+          enum: [date, author, category, photoCount]
+        direction:
+          type: string
+          enum: [asc, desc]
+        

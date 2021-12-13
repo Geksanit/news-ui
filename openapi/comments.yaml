@@ -1,0 +1,105 @@
+openapi: 3.0.1
+info:
+  title: NewSite Rest API
+  description: Comments
+  version: 1.0.0
+paths:
+  /comments/:
+    get:
+      tags:
+        - Comments
+      summary: All available comments (available only for admins)
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+            example: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+            example: 5
+          description: The numbers of items to return
+      responses:
+        200:
+          description: A list of comments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "difinitions.yaml#/components/schemas/Comment"
+        500:
+          description: Unexpected Error
+    post:
+      tags:
+        - Comments
+      summary: Add a new Comment
+      security:
+        - cookieAuth: []
+      requestBody:
+        description: Comment create request
+        content:
+          application/json:
+            schema:
+              $ref: "difinitions.yaml#/components/schemas/CreateComment"
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "difinitions.yaml#/components/schemas/Comment"
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
+    patch:
+      tags:
+        - Comments
+      summary: Update Comment
+      security:
+        - cookieAuth: []
+      requestBody:
+        description: Comment update request
+        content:
+          application/json:
+            schema:
+              $ref: "difinitions.yaml#/components/schemas/Comment"
+        required: true
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
+
+  /comments/{id}:
+    delete:
+      security:
+        - cookieAuth: []
+      tags:
+        - Comments
+      summary: Delete Comment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+          description: Comment delete request
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid request provided
+        500:
+          description: Unexpected Error
