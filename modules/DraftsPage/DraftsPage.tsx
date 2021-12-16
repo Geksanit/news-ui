@@ -1,25 +1,25 @@
 import { Box, Container, Typography } from '@material-ui/core';
 import React from 'react';
 
-import { News } from 'features/news/view/News';
+import { Drafts } from 'features/news/view/Drafts';
 import { Header } from 'shared/view/components';
 
-import styles from './NewsPage.module.scss';
+import styles from './DraftsPage.module.scss';
 
-const NewsPage = () => (
+const DraftsPage = () => (
   <>
     <Header />
     <main className={styles.newsPage}>
       <Box>
         <Typography variant="h3" color="primary" gutterBottom align="center">
-          Новости
+          Черновики
         </Typography>
       </Box>
       <Container maxWidth="lg">
-        <News />
+        <Drafts />
       </Container>
     </main>
   </>
 );
 
-export { NewsPage };
+export { DraftsPage };

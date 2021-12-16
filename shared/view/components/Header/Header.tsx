@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { MouseEvent, useState } from 'react';
 
-import { UserRole } from 'features/auth/mobx/api/types';
 import { useStores } from 'hooks';
 
 import styles from './Header.module.scss';
@@ -47,13 +46,13 @@ const Header = observer(() => {
           <Typography variant="h6" className={styles.title}>
             Новостной сайт
           </Typography>
-          {/* {isAuthorized && user && user.role === UserRole.BORROWER && (
-            <Link href="/createOffer" passHref>
+          {isAuthorized && user && user.role === 'author' && (
+            <Link href="/drafts" passHref>
               <Button color="inherit" size="large">
-                Создать сделку
+                Черновики
               </Button>
             </Link>
-          )} */}
+          )}
           <Link href="/news" passHref>
             <Button color="inherit" size="large">
               Новости

@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 
 import { useAfterCommunication, useStores } from 'hooks';
-import { httpActions } from 'services/httpActions';
 
 import styles from './PublicRouter.module.scss';
 
@@ -11,26 +10,24 @@ const PublicRouter = observer(({ children }) => {
   const [isSuccess, setSuccess] = useState(false);
 
   const {
-    authStore: { isAuthorized, getUserState, accessToken, getUser },
+    authStore: { isAuthorized, getUserState, getUser, user },
   } = useStores();
 
   useEffect(() => {
-    httpActions.setAccessToken(accessToken);
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (isAuthorized) {
-      getUser();
-    } else {
+    if (!isAuthorized) {
       setSuccess(true);
-    } 
-  }, [getUser, isAuthorized]);
+    } else if (user) {
+      setSuccess(true);
+    } else {
+      getUser();
+    }
+  }, [getUser, user, isAuthorized]);
 
   const handleSuccess = () => {
     setSuccess(true);
   };
 
-  useAfterCommunication(getUserState, handleSuccess);
+  useAfterCommunication(getUserState, handleSuccess, handleSuccess);
 
   if (!isSuccess) {
     return (

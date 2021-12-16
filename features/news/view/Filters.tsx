@@ -50,9 +50,8 @@ const sortFields = [
   { id: NewsOrder.by.PHOTO_COUNT, label: 'Количеству фото' },
 ];
 
-export const Filters = () => {
+export const Filters = ({ draft }: { draft?: boolean }) => {
   const {
-    authStore: { getUser },
     newsStore: {
       tags,
       categories,
@@ -68,8 +67,7 @@ export const Filters = () => {
   useEffect(() => {
     getTags();
     getCategories();
-    getUser();
-  }, [getNews, getUser, getTags, getCategories]);
+  }, [getNews, getTags, getCategories]);
 
   const [state, setState] = useState<FormData>(initialState);
 
@@ -115,10 +113,9 @@ export const Filters = () => {
       searchText: search || undefined,
       by,
       direction,
-      offset,
+      offset: offset * limit,
       limit,
     };
-    console.log('submit', data);
     getNews(data);
   };
 
@@ -127,99 +124,113 @@ export const Filters = () => {
   };
 
   if (tagsLoadState.isRequesting || categoriesLoadState.isRequesting) {
-    return <Loading />;
+    return (
+      <Card>
+        <CardContent>
+          <Loading />
+        </CardContent>
+      </Card>
+    );
   }
 
   if (tags.length === 0 || categories.length === 0) {
-    return <>no data</>;
+    return (
+      <Card>
+        <CardContent>нет данных</CardContent>
+      </Card>
+    );
   }
 
   return (
     <Card>
       <CardContent>
-        <Typography component="div" color="primary">
-          Фильтры
-        </Typography>
-        <FormControl fullWidth>
-          <InputLabel id="category-id">Категория</InputLabel>
-          <Select
-            name="category"
-            labelId="category-id"
-            value={state.category}
-            onChange={handleChangeCategory}
-          >
-            {categories.map((c) => (
-              <MenuItem key={c.id} value={c.id}>
-                {c.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id="tag-id">Тег</InputLabel>
-          <Select name="tag" labelId="tag-id" value={state.tag} onChange={handleChangeTag}>
-            {tags.map((t) => (
-              <MenuItem key={t.id} value={t.id}>
-                {t.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {!draft && (
+          <>
+            <Typography component="div" color="primary">
+              Фильтры
+            </Typography>
+            <FormControl fullWidth>
+              <InputLabel id="category-id">Категория</InputLabel>
+              <Select
+                name="category"
+                labelId="category-id"
+                value={state.category}
+                onChange={handleChangeCategory}
+              >
+                {categories.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {c.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="tag-id">Тег</InputLabel>
+              <Select name="tag" labelId="tag-id" value={state.tag} onChange={handleChangeTag}>
+                {tags.map((t) => (
+                  <MenuItem key={t.id} value={t.id}>
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-        <TextField
-          type="text"
-          name="author"
-          label="Автор"
-          value={state.author}
-          onChange={handleChangeAuthor}
-        />
-        <TextField
-          type="text"
-          name="title"
-          label="Заголовок"
-          value={state.title}
-          onChange={handleChangeTitle}
-        />
-        <TextField
-          type="text"
-          name="content"
-          label="Контент"
-          value={state.content}
-          onChange={handleChangeContent}
-        />
-        <TextField
-          type="text"
-          name="search"
-          label="Поиск"
-          value={state.search}
-          onChange={handleChangeSearch}
-        />
+            <TextField
+              type="text"
+              name="author"
+              label="Автор"
+              value={state.author}
+              onChange={handleChangeAuthor}
+            />
+            <TextField
+              type="text"
+              name="title"
+              label="Заголовок"
+              value={state.title}
+              onChange={handleChangeTitle}
+            />
+            <TextField
+              type="text"
+              name="content"
+              label="Контент"
+              value={state.content}
+              onChange={handleChangeContent}
+            />
+            <TextField
+              type="text"
+              name="search"
+              label="Поиск"
+              value={state.search}
+              onChange={handleChangeSearch}
+            />
 
-        <Typography component="div" color="primary">
-          Сортировка
-        </Typography>
-        <FormControl fullWidth>
-          <InputLabel id="tag-id">по</InputLabel>
-          <Select name="tag" labelId="tag-id" value={state.by} onChange={handleChangeBy}>
-            {sortFields.map((t) => (
-              <MenuItem key={t.id} value={t.id}>
-                {t.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id="tag-id">направление</InputLabel>
-          <Select
-            name="tag"
-            labelId="tag-id"
-            value={state.direction}
-            onChange={handleChangeDirection}
-          >
-            <MenuItem value={NewsOrder.direction.ASC}>убывание</MenuItem>
-            <MenuItem value={NewsOrder.direction.DESC}>возрастание</MenuItem>
-          </Select>
-        </FormControl>
+            <Typography component="div" color="primary">
+              Сортировка
+            </Typography>
+            <FormControl fullWidth>
+              <InputLabel id="tag-id">по</InputLabel>
+              <Select name="tag" labelId="tag-id" value={state.by} onChange={handleChangeBy}>
+                {sortFields.map((t) => (
+                  <MenuItem key={t.id} value={t.id}>
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="tag-id">направление</InputLabel>
+              <Select
+                name="tag"
+                labelId="tag-id"
+                value={state.direction}
+                onChange={handleChangeDirection}
+              >
+                <MenuItem value={NewsOrder.direction.ASC}>убывание</MenuItem>
+                <MenuItem value={NewsOrder.direction.DESC}>возрастание</MenuItem>
+              </Select>
+            </FormControl>
+          </>
+        )}
 
         <Typography component="div" color="primary">
           Пагинация

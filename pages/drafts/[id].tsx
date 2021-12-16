@@ -2,8 +2,8 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { OneNewsPage } from 'modules/OneNewsPage/OneNewsPage';
-import { PublicRouter } from 'modules/PublicRouter/PublicRouter';
+import { OneDraftPage } from 'modules/OneDraftPage/OneDraftPage';
+import { PrivateRouter } from 'modules/PrivateRouter/PrivateRouter';
 
 const Offer: React.FC = () => {
   const router = useRouter();
@@ -12,12 +12,12 @@ const Offer: React.FC = () => {
   return (
     <>
       <Head>
-        <title>News</title>
+        <title>Draft</title>
       </Head>
       {typeof id === 'string' ? (
-        <PublicRouter>
-          <OneNewsPage id={id} />
-        </PublicRouter>
+        <PrivateRouter>
+          <OneDraftPage id={id} />
+        </PrivateRouter>
       ) : (
         <p>Произошла ошибка</p>
       )}

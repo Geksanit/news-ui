@@ -1,6 +1,6 @@
 import { httpActions, HttpActions } from 'services/httpActions';
 import { getErrorMessage, isErrorResponse } from 'shared/helpers';
-import { CreateUser, Login, UserView } from 'shared/types/generated';
+import { Author, CreateUser, Login, UserView } from 'shared/types/generated';
 
 import { AuthResponse } from './types';
 
@@ -14,6 +14,18 @@ class Auth {
   public async getUser() {
     const response = await this.actions.get<AuthResponse<UserView>>(
       `${process.env.host}/users/me/`,
+      { withCredentials: true },
+    );
+    if (isErrorResponse(response)) {
+      throw new Error(getErrorMessage(response.data.error));
+    }
+
+    return response.data;
+  }
+
+  public async getAuthor(id: number) {
+    const response = await this.actions.get<AuthResponse<Author>>(
+      `${process.env.host}/authors/${id}`,
       { withCredentials: true },
     );
     if (isErrorResponse(response)) {

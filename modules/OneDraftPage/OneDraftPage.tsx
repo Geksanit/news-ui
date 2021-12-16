@@ -1,23 +1,23 @@
 import React, { FC } from 'react';
 
-import { OneNews } from 'features/news/view/OneNews';
+import { OneDraft } from 'features/news/view/OneDraft';
 import { Header } from 'shared/view/components';
 
-import styles from './OneNewsPage.module.scss';
+import styles from './OneDraftPage.module.scss';
 
 type Prop = {
   id: string;
 };
 
-const OneNewsPage: FC<Prop> = ({ id }: Prop) => (
+const OneDraftPage: FC<Prop> = ({ id }: Prop) => (
   <>
     <Header />
     <main>
       <section className={styles.container}>
-        <OneNews id={id} />
+        <OneDraft id={id} />
       </section>
     </main>
   </>
 );
 
-export { OneNewsPage };
+export { OneDraftPage };

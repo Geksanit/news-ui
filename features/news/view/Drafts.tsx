@@ -9,27 +9,27 @@ import { Loading } from 'shared/view/components';
 import { Filters } from './Filters';
 import css from './News.module.scss';
 
-const News = observer(() => {
+export const Drafts = observer(() => {
   const {
-    newsStore: { news, getNews, newsLoadState },
+    newsStore: { drafts, getDrafts, draftsLoadState },
   } = useStores();
 
   useEffect(() => {
-    getNews({ offset: 0, limit: 5 });
-  }, [getNews]);
+    getDrafts({ offset: 0, limit: 5 });
+  }, [getDrafts]);
 
   return (
     <>
       <div className={css.root} style={{ marginTop: '30px' }}>
         <div className={css.left}>
-          <Filters />
+          <Filters draft />
         </div>
         <div className={css.right}>
-          {!newsLoadState.isRequesting && news.length === 0 && 'По запросу ничего не найдено'}
-          {newsLoadState.isRequesting ? (
+          {!draftsLoadState.isRequesting && drafts.length === 0 && 'По запросу ничего не найдено'}
+          {draftsLoadState.isRequesting ? (
             <Loading />
           ) : (
-            news.map((n) => (
+            drafts.map((n) => (
               <Card className={css.cart} key={n.id}>
                 <CardContent>
                   <Typography component="div">
@@ -50,7 +50,7 @@ const News = observer(() => {
                   <Typography component="div">{n.content.slice(0, 100)}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Link href={`/app/news/${n.id}`}>
+                  <Link href={`/app/drafts/${n.id}`}>
                     <Button size="small">Читать дальше</Button>
                   </Link>
                 </CardActions>
@@ -62,5 +62,3 @@ const News = observer(() => {
     </>
   );
 });
-
-export { News };

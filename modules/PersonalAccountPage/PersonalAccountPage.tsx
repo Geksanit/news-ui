@@ -12,6 +12,9 @@ const PersonalAccountPage = observer(() => {
     authStore: { user },
   } = useStores();
 
+  if (!user) {
+    return null;
+  }
   return (
     <>
       <Header />

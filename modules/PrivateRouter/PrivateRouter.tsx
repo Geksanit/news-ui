@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { useAfterCommunication, useStores } from 'hooks';
-import { httpActions } from 'services/httpActions';
 
 import styles from './PrivateRouter.module.scss';
 
@@ -12,24 +11,19 @@ const PrivateRouter = observer(({ children }) => {
   const [isSuccess, setSuccess] = useState(false);
 
   const {
-    authStore: { isAuthorized, getUserState, accessToken, getUser },
-    // balanceStore: { getVirtualAccount },
+    authStore: { user, isAuthorized, getUserState, getUser },
   } = useStores();
-
-  useEffect(() => {
-    httpActions.setAccessToken(accessToken);
-  }, [accessToken]);
-
+  console.log('>', user, isAuthorized);
   const router = useRouter();
-
   useEffect(() => {
     if (!isAuthorized) {
       router.push('/auth/login');
+    } else if (user) {
+      setSuccess(true);
     } else {
       getUser();
-      // getVirtualAccount();
     }
-  }, [getUser, isAuthorized, router]);
+  }, [getUser, user, isAuthorized, router]);
 
   const handleSuccess = () => {
     setSuccess(true);
