@@ -1,9 +1,10 @@
 import { Button, Card, CardActions, CardContent, Link, Typography } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
 import { observer } from 'mobx-react-lite';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
-import { useStores } from 'hooks';
+import { useAfterCommunication, useStores } from 'hooks';
 import { Loading } from 'shared/view/components';
 
 import { Filters } from './Filters';
@@ -11,17 +12,23 @@ import css from './News.module.scss';
 
 export const Drafts = observer(() => {
   const {
-    newsStore: { drafts, getDrafts, draftsLoadState },
+    newsStore: { drafts, getDrafts, draftsLoadState, publishDraft, publishDraftState },
   } = useStores();
-
+  const router = useRouter();
   useEffect(() => {
     getDrafts({ offset: 0, limit: 5 });
   }, [getDrafts]);
+  useAfterCommunication(publishDraftState, () => router.push('/news/'));
 
   return (
     <>
       <div className={css.root} style={{ marginTop: '30px' }}>
         <div className={css.left}>
+          <Link href="/app/drafts/create/">
+            <Button variant="contained" color="primary" size="small">
+              создать черновик
+            </Button>
+          </Link>
           <Filters draft />
         </div>
         <div className={css.right}>
@@ -47,12 +54,21 @@ export const Drafts = observer(() => {
                     {'  '}
                     теги: {n.tags.map((t) => t.label).join(',')}
                   </Typography>
-                  <Typography component="div">{n.content.slice(0, 100)}</Typography>
+                  <Typography component="div">
+                    {n.content.slice(0, 100)}
+                    {n.content.length > 100 ? '...' : ''}
+                  </Typography>
                 </CardContent>
                 <CardActions>
-                  <Link href={`/app/drafts/${n.id}`}>
+                  <Link href={`/app/drafts/draft/${n.id}`}>
                     <Button size="small">Читать дальше</Button>
                   </Link>
+                  <Link href={`/app/drafts/edit/${n.id}`}>
+                    <Button size="small">Изменить</Button>
+                  </Link>
+                  <Button size="small" onClick={() => publishDraft(n.id)}>
+                    Опубликовать
+                  </Button>
                 </CardActions>
               </Card>
             ))

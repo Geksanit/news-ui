@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 
 import { useStores } from '../../../hooks';
@@ -50,12 +51,13 @@ const sortFields = [
   { id: NewsOrder.by.PHOTO_COUNT, label: 'Количеству фото' },
 ];
 
-export const Filters = ({ draft }: { draft?: boolean }) => {
+export const Filters = observer(({ draft }: { draft?: boolean }) => {
   const {
     newsStore: {
       tags,
       categories,
       getNews,
+      getDrafts,
       newsLoadState,
       getTags,
       getCategories,
@@ -116,7 +118,11 @@ export const Filters = ({ draft }: { draft?: boolean }) => {
       offset: offset * limit,
       limit,
     };
-    getNews(data);
+    if (draft) {
+      getDrafts({ offset: offset * limit, limit });
+    } else {
+      getNews(data);
+    }
   };
 
   const onReset = () => {
@@ -276,4 +282,4 @@ export const Filters = ({ draft }: { draft?: boolean }) => {
       </CardContent>
     </Card>
   );
-};
+});

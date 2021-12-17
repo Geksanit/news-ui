@@ -9,11 +9,9 @@ import styles from './PrivateRouter.module.scss';
 
 const PrivateRouter = observer(({ children }) => {
   const [isSuccess, setSuccess] = useState(false);
-
   const {
     authStore: { user, isAuthorized, getUserState, getUser },
   } = useStores();
-  console.log('>', user, isAuthorized);
   const router = useRouter();
   useEffect(() => {
     if (!isAuthorized) {

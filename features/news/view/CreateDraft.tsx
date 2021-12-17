@@ -8,12 +8,15 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  TextareaAutosize,
   TextField,
   Typography,
 } from '@material-ui/core';
+import { observer } from 'mobx-react-lite';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { useStores } from '../../../hooks';
+import { useAfterCommunication, useStores } from '../../../hooks';
 import { CreateNews } from '../../../shared/types/generated';
 import { Loading } from '../../../shared/view/components';
 
@@ -44,18 +47,23 @@ const initialState: FormData = {
   photo: '',
 };
 
-export const CreateDraft = ({ id }: { id?: number }) => {
+export const CreateDraft = observer(({ id }: { id?: number }) => {
+  const router = useRouter();
   const {
     newsStore: {
       tags,
       categories,
       createDraft,
       createDraftState,
+      editDraftState,
+      editDraft,
       getTags,
       getCategories,
       tagsLoadState,
       categoriesLoadState,
       getOneDraft,
+      oneDraft,
+      oneDraftLoadState,
       clearOneDraft,
     },
   } = useStores();
@@ -79,14 +87,12 @@ export const CreateDraft = ({ id }: { id?: number }) => {
     setState({ ...state, category: event.target.value as number });
   };
   const handleChangeTag = (event: React.ChangeEvent<{ value: unknown }>) => {
-    console.log('test', event.target.value);
     setState({ ...state, tagIds: event.target.value as number[] });
   };
-
   const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, title: event.target.value });
   };
-  const handleChangeContent = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeContent = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setState({ ...state, content: event.target.value });
   };
   const handleChangePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,9 +110,32 @@ export const CreateDraft = ({ id }: { id?: number }) => {
         photoLinks: [],
         tagIds,
       };
-      createDraft(data);
+      if (id && oneDraft) {
+        editDraft({
+          ...data,
+          authorId: oneDraft.author.id,
+          id: oneDraft.id,
+          createdAt: oneDraft.createdAt,
+        });
+      } else {
+        createDraft(data);
+      }
     }
   };
+
+  useAfterCommunication(createDraftState, () => router.push('/drafts/'));
+  useAfterCommunication(editDraftState, () => router.push('/drafts/'));
+  useAfterCommunication(oneDraftLoadState, () => {
+    if (oneDraft) {
+      setState({
+        title: oneDraft.title,
+        category: oneDraft.category[0].id,
+        tagIds: oneDraft.tags.map((t) => t.id),
+        photo: oneDraft.topPhotoLink,
+        content: oneDraft.content,
+      });
+    }
+  });
 
   const onReset = () => {
     setState(initialState);
@@ -136,7 +165,7 @@ export const CreateDraft = ({ id }: { id?: number }) => {
         <Typography component="div" color="primary">
           Создание черновика
         </Typography>
-        <FormControl fullWidth>
+        <FormControl fullWidth margin="normal">
           <InputLabel id="category-id">Категория</InputLabel>
           <Select
             name="category"
@@ -152,7 +181,7 @@ export const CreateDraft = ({ id }: { id?: number }) => {
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth>
+        <FormControl fullWidth margin="normal">
           <InputLabel id="tag-id">Теги</InputLabel>
           <Select
             name="tag"
@@ -160,7 +189,7 @@ export const CreateDraft = ({ id }: { id?: number }) => {
             multiple
             value={state.tagIds}
             onChange={handleChangeTag}
-            input={<OutlinedInput label="Name" />}
+            input={<OutlinedInput label="Теги" />}
             MenuProps={MenuProps}
           >
             {tags.map((t) => (
@@ -170,33 +199,37 @@ export const CreateDraft = ({ id }: { id?: number }) => {
             ))}
           </Select>
         </FormControl>
-
-        <TextField
-          type="text"
-          name="title"
-          label="Заголовок"
-          value={state.title}
-          onChange={handleChangeTitle}
-          required
-        />
-        <TextField
-          type="text"
-          name="content"
-          label="Контент"
-          value={state.content}
-          onChange={handleChangeContent}
-          required
-        />
-
-        <TextField
-          type="text"
-          name="photo"
-          label="Ссылка на фото"
-          value={state.photo}
-          onChange={handleChangePhoto}
-          required
-        />
-
+        <FormControl fullWidth margin="normal">
+          <TextField
+            type="text"
+            name="title"
+            label="Заголовок"
+            value={state.title}
+            onChange={handleChangeTitle}
+            required
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            type="text"
+            name="photo"
+            label="Фото"
+            value={state.photo}
+            onChange={handleChangePhoto}
+            required
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <TextareaAutosize
+            aria-label="minimum height"
+            minRows={3}
+            placeholder="Контент"
+            // style={{ width: 200 }}
+            value={state.content}
+            onChange={handleChangeContent}
+            required
+          />
+        </FormControl>
         <CardActions>
           <Button
             variant="contained"
@@ -216,10 +249,10 @@ export const CreateDraft = ({ id }: { id?: number }) => {
             size="small"
             onClick={onReset}
           >
-            Отменить
+            Очистить
           </Button>
         </CardActions>
       </CardContent>
     </Card>
   );
-};
+});

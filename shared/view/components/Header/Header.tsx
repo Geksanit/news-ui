@@ -18,7 +18,6 @@ const Header = observer(() => {
   const {
     authStore: { user, isAuthorized, logout },
   } = useStores();
-  console.log('header', isAuthorized, user);
 
   const handleMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

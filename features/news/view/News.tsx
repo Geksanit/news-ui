@@ -47,7 +47,10 @@ const News = observer(() => {
                     {'  '}
                     теги: {n.tags.map((t) => t.label).join(',')}
                   </Typography>
-                  <Typography component="div">{n.content.slice(0, 100)}</Typography>
+                  <Typography component="div">
+                    {n.content.slice(0, 100)}
+                    {n.content.length > 100 ? '...' : ''}
+                  </Typography>
                 </CardContent>
                 <CardActions>
                   <Link href={`/app/news/${n.id}`}>

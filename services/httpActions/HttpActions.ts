@@ -4,7 +4,7 @@ type Config = AxiosRequestConfig & { withAccessToken?: boolean };
 class HttpActions {
   private request: AxiosInstance;
 
-  private accessToken: string = null;
+  private accessToken: string | null = null;
 
   constructor(baseURL?: string, headers?: AxiosRequestConfig['headers']) {
     const config: AxiosRequestConfig = {

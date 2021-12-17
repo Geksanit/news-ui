@@ -71,11 +71,14 @@ class NewsStore {
       getDrafts: flow,
       getOneDraft: flow,
       createDraft: flow,
+      createDraftState: observable,
       editDraft: flow,
+      editDraftState: observable,
       publishDraft: flow,
+      publishDraftState: observable,
 
-      createCommentState: observable,
       createComment: flow,
+      createCommentState: observable,
       clearOneDraft: flow,
     });
 
@@ -164,7 +167,7 @@ class NewsStore {
   *createDraft(data: CreateNews) {
     this.createDraftState = { isRequesting: true, error: null };
     try {
-      this.drafts = yield this.api.createDraft(data);
+      yield this.api.createDraft(data);
       this.createDraftState = { isRequesting: false, error: null };
     } catch ({ message }) {
       this.createDraftState = { isRequesting: false, error: message as string };
@@ -174,7 +177,7 @@ class NewsStore {
   *createComment(data: CreateComment) {
     this.createCommentState = { isRequesting: true, error: null };
     try {
-      this.drafts = yield this.api.createComment(data);
+      yield this.api.createComment(data);
       this.comments = yield this.api.loadComments(data.newsId);
       this.createCommentState = { isRequesting: false, error: null };
     } catch ({ message }) {
@@ -185,7 +188,7 @@ class NewsStore {
   *editDraft(data: News) {
     this.editDraftState = { isRequesting: true, error: null };
     try {
-      this.drafts = yield this.api.editDraft(data);
+      yield this.api.editDraft(data);
       this.editDraftState = { isRequesting: false, error: null };
     } catch ({ message }) {
       this.editDraftState = { isRequesting: false, error: message as string };
@@ -195,7 +198,7 @@ class NewsStore {
   *publishDraft(id: number) {
     this.publishDraftState = { isRequesting: true, error: null };
     try {
-      this.drafts = yield this.api.publishDraft(id);
+      yield this.api.publishDraft(id);
       this.publishDraftState = { isRequesting: false, error: null };
     } catch ({ message }) {
       this.publishDraftState = { isRequesting: false, error: message as string };

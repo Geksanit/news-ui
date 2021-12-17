@@ -112,7 +112,7 @@ class NewsApi {
 
   public async createDraft(data: CreateNews) {
     const response = await this.actions.post<ResponseWithData<News>>(
-      `${process.env.host}/drafts?${queryString.stringify(defaultOffset)}`,
+      `${process.env.host}/drafts/`,
       data,
       {
         withCredentials: true,
@@ -143,7 +143,7 @@ class NewsApi {
 
   public async editDraft(data: News) {
     const response = await this.actions.patch<ResponseWithData<News>>(
-      `${process.env.host}/drafts`,
+      `${process.env.host}/drafts/`,
       data,
       {
         withCredentials: true,
